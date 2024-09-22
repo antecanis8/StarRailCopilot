@@ -2,7 +2,6 @@ import json
 import os
 import random
 import string
-from collections import deque
 from datetime import datetime, timedelta, timezone
 
 import yaml
@@ -191,95 +190,57 @@ def alas_instance():
 
 
 def deep_get(d, keys, default=None):
-    # 240 + 30 * depth (ns)
-    if type(keys) is str:
-        keys = keys.split('.')
+    """
+    Get values in dictionary safely.
+    https://stackoverflow.com/questions/25833613/safe-method-to-get-value-of-nested-dictionary
 
-    try:
-        for k in keys:
-            d = d[k]
+    Args:
+        d (dict):
+        keys (str, list): Such as `Scheduler.NextRun.value`
+        default: Default return if key not found.
+
+    Returns:
+
+    """
+    if isinstance(keys, str):
+        keys = keys.split('.')
+    assert type(keys) is list
+    if d is None:
+        return default
+    if not keys:
         return d
-    # No such key
-    except KeyError:
-        return default
-    # Input `keys` is not iterable or input `d` is not dict
-    except TypeError:
-        return default
+    return deep_get(d.get(keys[0]), keys[1:], default)
 
 
 def deep_set(d, keys, value):
     """
     Set value into dictionary safely, imitating deep_get().
     """
-    # 150 * depth (ns)
-    if type(keys) is str:
+    if isinstance(keys, str):
         keys = keys.split('.')
-
-    first = True
-    exist = True
-    prev_d = None
-    prev_k = None
-    prev_k2 = None
-    try:
-        for k in keys:
-            if first:
-                prev_d = d
-                prev_k = k
-                first = False
-                continue
-            try:
-                # if key in dict: dict[key] > dict.get > dict.setdefault > try dict[key] except
-                if exist and prev_k in d:
-                    prev_d = d
-                    d = d[prev_k]
-                else:
-                    exist = False
-                    new = {}
-                    d[prev_k] = new
-                    d = new
-            except TypeError:
-                # `d` is not dict
-                exist = False
-                d = {}
-                prev_d[prev_k2] = {prev_k: d}
-
-            prev_k2 = prev_k
-            prev_k = k
-            # prev_k2, prev_k = prev_k, k
-    # Input `keys` is not iterable
-    except TypeError:
-        return
-
-    # Last key, set value
-    try:
-        d[prev_k] = value
-        return
-    # Last value `d` is not dict
-    except TypeError:
-        prev_d[prev_k2] = {prev_k: value}
-        return
+    assert type(keys) is list
+    if not keys:
+        return value
+    if not isinstance(d, dict):
+        d = {}
+    d[keys[0]] = deep_set(d.get(keys[0], {}), keys[1:], value)
+    return d
 
 
 def deep_pop(d, keys, default=None):
-    if type(keys) is str:
+    """
+    Pop value from dictionary safely, imitating deep_get().
+    """
+    if isinstance(keys, str):
         keys = keys.split('.')
-
-    try:
-        for k in keys[:-1]:
-            d = d[k]
-        return d.pop(keys[-1], default)
-    # No such key
-    except KeyError:
+    assert type(keys) is list
+    if not isinstance(d, dict):
         return default
-    # Input `keys` is not iterable or input `d` is not dict
-    except TypeError:
+    if not keys:
         return default
-    # Input `keys` out of index
-    except IndexError:
-        return default
-    # Last `d` is not dict
-    except AttributeError:
-        return default
+    elif len(keys) == 1:
+        return d.pop(keys[0], default)
+    return deep_pop(d.get(keys[0]), keys[1:], default)
 
 
 def deep_default(d, keys, value):
@@ -301,75 +262,26 @@ def deep_default(d, keys, value):
     return d
 
 
-def deep_iter(data, min_depth=None, depth=3):
+def deep_iter(data, depth=0, current_depth=1):
     """
-    300us on alas.json depth=3 (530+ rows)
+    Iter a dictionary safely.
 
     Args:
-        data:
-        min_depth:
-        depth:
+        data (dict):
+        depth (int): Maximum depth to iter
+        current_depth (int):
 
     Returns:
-
+        list: Key path
+        Any:
     """
-    if min_depth is None:
-        min_depth = depth
-    assert 1 <= min_depth <= depth
-
-    # Equivalent to dict.items()
-    try:
-        if depth == 1:
-            for k, v in data.items():
-                yield [k], v
-            return
-        # Iter first depth
-        elif min_depth == 1:
-            q = deque()
-            for k, v in data.items():
-                key = [k]
-                if type(v) is dict:
-                    q.append((key, v))
-                else:
-                    yield key, v
-        # Iter target depth only
-        else:
-            q = deque()
-            for k, v in data.items():
-                key = [k]
-                if type(v) is dict:
-                    q.append((key, v))
-    except AttributeError:
-        # `data` is not dict
-        return
-
-    # Iter depths
-    current = 2
-    while current <= depth:
-        new_q = deque()
-        # max depth
-        if current == depth:
-            for key, data in q:
-                for k, v in data.items():
-                    yield key + [k], v
-        # in target depth
-        elif min_depth <= current < depth:
-            for key, data in q:
-                for k, v in data.items():
-                    subkey = key + [k]
-                    if type(v) is dict:
-                        new_q.append((subkey, v))
-                    else:
-                        yield subkey, v
-        # Haven't reached min depth
-        else:
-            for key, data in q:
-                for k, v in data.items():
-                    subkey = key + [k]
-                    if type(v) is dict:
-                        new_q.append((subkey, v))
-        q = new_q
-        current += 1
+    if isinstance(data, dict) \
+            and (depth and current_depth <= depth):
+        for key, value in data.items():
+            for child_path, child_value in deep_iter(value, depth=depth, current_depth=current_depth + 1):
+                yield [key] + child_path, child_value
+    else:
+        yield [], data
 
 
 def parse_value(value, data):

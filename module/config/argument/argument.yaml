@@ -106,7 +106,7 @@ Dungeon:
 TrailblazePower:
   ExtractReservedTrailblazePower: false
   UseFuel: false
-  FuelReserve: 5
+  UseFuelUntilRemainCount: 0
 DungeonSupport:
   Use:
     value: when_daily
@@ -120,8 +120,6 @@ DungeonStorage:
     stored: StoredTrailblazePower
     order: 1
     color: "#eb8efe"
-  Reserved:
-    stored: StoredResersed
   Immersifier:
     stored: StoredImmersifier
   DungeonDouble:
@@ -185,9 +183,6 @@ BattlePassStorage:
   BattlePassQuestSynthesizeConsumables:
     stored: StoredBattlePassQuestSynthesizeConsumables
     display: display
-  BattlePassQuestStagnantShadow:
-    stored: StoredBattlePassQuestStagnantShadow
-    display: display
   BattlePassQuestCavernOfCorrosion:
     stored: StoredBattlePassQuestCavernOfCorrosion
     display: display
@@ -246,12 +241,13 @@ CloudStorage:
 RogueWorld:
   # Worlds will be injected in config updater
   World:
-    value: Simulated_Universe_World_8
+    value: Simulated_Universe_World_7
     option: [
       Simulated_Universe_World_3,
       Simulated_Universe_World_4,
       Simulated_Universe_World_5,
       Simulated_Universe_World_6,
+      Simulated_Universe_World_7,
       Simulated_Universe_World_8,
     ]
   Path:

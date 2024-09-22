@@ -206,10 +206,6 @@ class StoredTrailblazePower(StoredCounter):
         return value
 
 
-class StoredResersed(StoredCounter):
-    FIXED_TOTAL = 2400
-
-
 class StoredImmersifier(StoredCounter):
     FIXED_TOTAL = 8
 
@@ -238,10 +234,8 @@ class StoredDaily(StoredCounter, StoredExpiredAt0400):
     quest4 = ''
     quest5 = ''
     quest6 = ''
-    quest7 = ''
-    quest8 = ''
 
-    FIXED_TOTAL = 8
+    FIXED_TOTAL = 6
 
     def load_quests(self):
         """
@@ -251,8 +245,7 @@ class StoredDaily(StoredCounter, StoredExpiredAt0400):
         # DailyQuest should be lazy loaded
         from tasks.daily.keywords import DailyQuest
         quests = []
-        for name in [self.quest1, self.quest2, self.quest3, self.quest4,
-                     self.quest5, self.quest6, self.quest7, self.quest8]:
+        for name in [self.quest1, self.quest2, self.quest3, self.quest4, self.quest5, self.quest6]:
             if not name:
                 continue
             try:
@@ -295,14 +288,6 @@ class StoredDaily(StoredCounter, StoredExpiredAt0400):
                 self.quest6 = quests[5]
             except IndexError:
                 self.quest6 = ''
-            try:
-                self.quest7 = quests[6]
-            except IndexError:
-                self.quest7 = ''
-            try:
-                self.quest8 = quests[7]
-            except IndexError:
-                self.quest8 = ''
 
     def clear(self):
         with self._config.multi_set():
@@ -312,8 +297,6 @@ class StoredDaily(StoredCounter, StoredExpiredAt0400):
             self.quest4 = ''
             self.quest5 = ''
             self.quest6 = ''
-            self.quest7 = ''
-            self.quest8 = ''
 
 
 class StoredDungeonDouble(StoredExpiredAt0400):
@@ -428,8 +411,9 @@ class StoredBattlePassQuestSynthesizeConsumables(StoredCounter):
     FIXED_TOTAL = 10
 
 
-class StoredBattlePassQuestStagnantShadow(StoredCounter):
-    FIXED_TOTAL = 3
+# Not exists on client side
+# class StoredBattlePassQuestStagnantShadow(StoredCounter):
+#     FIXED_TOTAL = 8
 
 
 class StoredBattlePassQuestCavernOfCorrosion(StoredCounter):

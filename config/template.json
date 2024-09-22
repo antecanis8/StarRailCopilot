@@ -65,8 +65,6 @@
       "Item_IPC_Work_Permit": {},
       "Item_Raging_Heart": {},
       "Item_Dream_Fridge": {},
-      "Item_Nail_of_the_Beast_Coffin": {},
-      "Item_A_Glass_of_the_Besotted_Era": {},
       "Item_Dream_Flamer": {},
       "Item_Worldbreaker_Blade": {},
       "Item_Arrow_of_the_Starchaser": {},
@@ -88,7 +86,6 @@
       "Item_Regret_of_Infinite_Ochema": {},
       "Item_Past_Evils_of_the_Borehole_Planet_Disaster": {},
       "Item_Lost_Echo_of_the_Shared_Wish": {},
-      "Item_Auspice_Sliver": {},
       "Item_Squirming_Core": {},
       "Item_Conqueror_Will": {},
       "Item_Silvermane_Medal": {},
@@ -110,7 +107,6 @@
     },
     "DungeonStorage": {
       "TrailblazePower": {},
-      "Reserved": {},
       "Immersifier": {},
       "DungeonDouble": {},
       "EchoOfWar": {},
@@ -119,30 +115,7 @@
     "TrailblazePower": {
       "ExtractReservedTrailblazePower": false,
       "UseFuel": false,
-      "FuelReserve": 5
-    }
-  },
-  "Ornament": {
-    "Scheduler": {
-      "Enable": false,
-      "NextRun": "2020-01-01 00:00:00",
-      "Command": "Ornament",
-      "ServerUpdate": "04:00"
-    },
-    "Ornament": {
-      "Dungeon": "Divergent_Universe_Eternal_Comedy",
-      "UseImmersifier": true,
-      "DoubleEvent": true,
-      "UseStamina": false
-    },
-    "DungeonSupport": {
-      "Use": "when_daily",
-      "Character": "FirstCharacter"
-    },
-    "TrailblazePower": {
-      "ExtractReservedTrailblazePower": false,
-      "UseFuel": false,
-      "FuelReserve": 5
+      "UseFuelUntilRemainCount": 0
     }
   },
   "DailyQuest": {
@@ -172,7 +145,6 @@
       "BattlePassQuestEchoOfWar": {},
       "BattlePassQuestCredits": {},
       "BattlePassQuestSynthesizeConsumables": {},
-      "BattlePassQuestStagnantShadow": {},
       "BattlePassQuestCavernOfCorrosion": {},
       "BattlePassQuestTrailblazePower": {}
     }
@@ -246,7 +218,7 @@
       "ServerUpdate": "04:00"
     },
     "RogueWorld": {
-      "World": "Simulated_Universe_World_8",
+      "World": "Simulated_Universe_World_7",
       "Path": "The_Hunt",
       "Bonus": "Blessing Universe",
       "DomainStrategy": "combat",
@@ -267,6 +239,24 @@
     },
     "RogueDebug": {
       "DebugMode": false
+    }
+  },
+  "Ornament": {
+    "Scheduler": {
+      "Enable": false,
+      "NextRun": "2020-01-01 00:00:00",
+      "Command": "Ornament",
+      "ServerUpdate": "04:00"
+    },
+    "Ornament": {
+      "Dungeon": "Divergent_Universe_Eternal_Comedy",
+      "UseImmersifier": true,
+      "DoubleEvent": true,
+      "UseStamina": false
+    },
+    "DungeonSupport": {
+      "Use": "when_daily",
+      "Character": "FirstCharacter"
     }
   },
   "Daemon": {

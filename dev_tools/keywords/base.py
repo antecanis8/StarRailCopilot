@@ -92,13 +92,13 @@ class GenerateKeyword:
     text_map['cn'] = TextMap('chs')
 
     @staticmethod
-    def read_file(file: str) -> list:
+    def read_file(file: str) -> dict:
         """
         Args:
             file: ./ExcelOutput/GameplayGuideData.json
 
         Returns:
-            list
+            dict:
         """
         file = os.path.join(TextMap.DATA_FOLDER, file)
         return read_file(file)

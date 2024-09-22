@@ -3,7 +3,6 @@ import itertools
 
 from lxml import etree
 
-from module.device.env import IS_WINDOWS
 # Patch pkg_resources before importing adbutils and uiautomator2
 from module.device.pkg_resources import get_distribution
 
@@ -71,14 +70,11 @@ class Device(Screenshot, Control, AppControl):
     stuck_timer = Timer(60, count=60).start()
 
     def __init__(self, *args, **kwargs):
-        for trial in range(4):
+        for _ in range(2):
             try:
                 super().__init__(*args, **kwargs)
                 break
             except EmulatorNotRunningError:
-                if trial >= 3:
-                    logger.critical('Failed to start emulator after 3 trial')
-                    raise RequestHumanTakeover
                 # Try to start emulator
                 if self.emulator_instance is not None:
                     self.emulator_start()
@@ -87,11 +83,17 @@ class Device(Screenshot, Control, AppControl):
                         f'No emulator with serial "{self.config.Emulator_Serial}" found, '
                         f'please set a correct serial'
                     )
-                    raise RequestHumanTakeover
+                    raise
 
         # Auto-fill emulator info
-        if IS_WINDOWS and self.config.EmulatorInfo_Emulator == 'auto':
+        if self.config.EmulatorInfo_Emulator == 'auto':
             _ = self.emulator_instance
+
+        # SRC only, use nemu_ipc if available
+        available = self.nemu_ipc_available()
+        logger.attr('nemu_ipc_available', available)
+        if available:
+            self.config.override(Emulator_ScreenshotMethod='nemu_ipc')
 
         self.screenshot_interval_set()
         self.method_check()
@@ -136,10 +138,6 @@ class Device(Screenshot, Control, AppControl):
         # if self.config.Emulator_ScreenshotMethod != 'nemu_ipc' and self.config.Emulator_ControlMethod == 'nemu_ipc':
         #     logger.warning('When not using nemu_ipc, both screenshot and control should not use nemu_ipc')
         #     self.config.Emulator_ControlMethod = 'minitouch'
-        # Allow Hermit on VMOS only
-        if self.config.Emulator_ControlMethod == 'Hermit' and not self.is_vmos:
-            logger.warning('ControlMethod is allowed on VMOS only')
-            self.config.Emulator_ControlMethod = 'minitouch'
         pass
 
     def screenshot(self):

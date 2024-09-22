@@ -100,7 +100,7 @@ class ConfigGenerator:
         option_add(keys='Ornament.Dungeon.option', options=ornament)
         # Insert characters
         from tasks.character.keywords import CharacterList
-        unsupported_characters = ['Lingsha']
+        unsupported_characters = ["Jade"]
         characters = [character.name for character in CharacterList.instances.values()
                       if character.name not in unsupported_characters]
         option_add(keys='DungeonSupport.Character.option', options=characters)
@@ -370,11 +370,11 @@ class ConfigGenerator:
         dailies = deep_get(self.argument, keys='Dungeon.Name.option')
         # Dungeon names
         i18n_memories = {
-            'cn': '材料：角色经验（{dungeon} {world}）',
-            'cht': '材料：角色經驗（{dungeon} {world}）',
-            'jp': '素材：役割経験（{dungeon} {world}）：',
-            'en': 'Material: Character EXP ({dungeon}, {world})',
-            'es': 'Material: EXP de personaje ({dungeon}, {world})',
+            'cn': '材料：角色经验（{dungeon}）',
+            'cht': '材料：角色經驗（{dungeon}）',
+            'jp': '素材：役割経験（{dungeon}）：',
+            'en': 'Material: Character EXP ({dungeon})',
+            'es': 'Material: EXP de personaje ({dungeon})',
         }
         i18n_aether = {
             'cn': '材料：武器经验（{dungeon}）',
@@ -409,19 +409,15 @@ class ConfigGenerator:
             dungeon: DungeonList = dungeon
             dungeon_name = dungeon.__getattribute__(ingame_lang)
             dungeon_name = re.sub('[「」]', '', dungeon_name)
-            if dungeon.world:
-                world_name = re.sub('[「」]', '', dungeon.world.__getattribute__(ingame_lang))
-            else:
-                world_name = ''
             if dungeon.is_Calyx_Golden_Memories:
                 deep_set(new, keys=['Dungeon', 'Name', dungeon.name],
-                         value=i18n_memories[ingame_lang].format(dungeon=dungeon_name, world=world_name))
+                         value=i18n_memories[ingame_lang].format(dungeon=dungeon_name))
             if dungeon.is_Calyx_Golden_Aether:
                 deep_set(new, keys=['Dungeon', 'Name', dungeon.name],
-                         value=i18n_aether[ingame_lang].format(dungeon=dungeon_name, world=world_name))
+                         value=i18n_aether[ingame_lang].format(dungeon=dungeon_name))
             if dungeon.is_Calyx_Golden_Treasures:
                 deep_set(new, keys=['Dungeon', 'Name', dungeon.name],
-                         value=i18n_treasure[ingame_lang].format(dungeon=dungeon_name, world=world_name))
+                         value=i18n_treasure[ingame_lang].format(dungeon=dungeon_name))
             if dungeon.is_Calyx_Crimson:
                 plane = dungeon.plane.__getattribute__(ingame_lang)
                 plane = re.sub('[「」]', '', plane)
@@ -814,28 +810,15 @@ class ConfigUpdater:
                     yield 'Dungeon.Dungeon.NameAtDoubleRelic', value
             elif key.endswith('CavernOfCorrosion'):
                 yield 'Dungeon.Dungeon.NameAtDoubleRelic', value
-        if key == 'Rogue.RogueWorld.UseImmersifier' and value is False:
+        elif key == 'Rogue.RogueWorld.UseImmersifier' and value is False:
             yield 'Rogue.RogueWorld.UseStamina', False
-        if key == 'Rogue.RogueWorld.UseStamina' and value is True:
+        elif key == 'Rogue.RogueWorld.UseStamina' and value is True:
             yield 'Rogue.RogueWorld.UseImmersifier', True
-        if key == 'Rogue.RogueWorld.DoubleEvent' and value is True:
+        elif key == 'Rogue.RogueWorld.DoubleEvent' and value is True:
             yield 'Rogue.RogueWorld.UseImmersifier', True
-        if key == 'Alas.Emulator.GameClient' and value == 'cloud_android':
+        elif key == 'Alas.Emulator.GameClient' and value == 'cloud_android':
             yield 'Alas.Emulator.PackageName', 'CN-Official'
             yield 'Alas.Optimization.WhenTaskQueueEmpty', 'close_game'
-        # Sync Dungeon.TrailblazePower and Ornament.TrailblazePower
-        if key == 'Dungeon.TrailblazePower.ExtractReservedTrailblazePower':
-            yield 'Ornament.TrailblazePower.ExtractReservedTrailblazePower', value
-        if key == 'Dungeon.TrailblazePower.UseFuel':
-            yield 'Ornament.TrailblazePower.UseFuel', value
-        if key == 'Dungeon.TrailblazePower.FuelReserve':
-            yield 'Ornament.TrailblazePower.FuelReserve', value
-        if key == 'Ornament.TrailblazePower.ExtractReservedTrailblazePower':
-            yield 'Dungeon.TrailblazePower.ExtractReservedTrailblazePower', value
-        if key == 'Ornament.TrailblazePower.UseFuel':
-            yield 'Dungeon.TrailblazePower.UseFuel', value
-        if key == 'Ornament.TrailblazePower.FuelReserve':
-            yield 'Dungeon.TrailblazePower.FuelReserve', value
 
     def iter_hidden_args(self, data) -> t.Iterator[str]:
         """
@@ -846,9 +829,7 @@ class ConfigUpdater:
             str: Arg path that should be hidden
         """
         if deep_get(data, 'Dungeon.TrailblazePower.UseFuel') == False:
-            yield 'Dungeon.TrailblazePower.FuelReserve'
-        if deep_get(data, 'Ornament.TrailblazePower.UseFuel') == False:
-            yield 'Ornament.TrailblazePower.FuelReserve'
+            yield 'Dungeon.TrailblazePower.UseFuelUntilRemainCount'
         if deep_get(data, 'Rogue.RogueBlessing.PresetBlessingFilter') != 'custom':
             yield 'Rogue.RogueBlessing.CustomBlessingFilter'
         if deep_get(data, 'Rogue.RogueBlessing.PresetResonanceFilter') != 'custom':

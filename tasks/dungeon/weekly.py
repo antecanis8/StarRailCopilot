@@ -2,9 +2,10 @@ from module.config.utils import get_server_next_monday_update
 from module.logger import logger
 from module.ocr.ocr import DigitCounter
 from tasks.daily.keywords import KEYWORDS_DAILY_QUEST
-from tasks.dungeon.assets.assets_dungeon_ui import OCR_WEEKLY_LIMIT
+from tasks.dungeon.assets.assets_dungeon_ui import OCR_DUNGEON_LIST, OCR_WEEKLY_LIMIT
 from tasks.dungeon.dungeon import Dungeon
 from tasks.dungeon.keywords import DungeonList, KEYWORDS_DUNGEON_NAV, KEYWORDS_DUNGEON_TAB
+from tasks.dungeon.ui import DUNGEON_LIST
 
 
 class OcrWeeklyLimit(DigitCounter):
@@ -77,7 +78,8 @@ class WeeklyDungeon(Dungeon):
         # UI switches
         self.dungeon_tab_goto(KEYWORDS_DUNGEON_TAB.Survival_Index)
         # Equivalent to self.dungeon_goto(dungeon), but check limit remains
-        self.dungeon_nav_goto(KEYWORDS_DUNGEON_NAV.Echo_of_War)
+        DUNGEON_LIST.search_button = OCR_DUNGEON_LIST
+        self._dungeon_nav_goto(KEYWORDS_DUNGEON_NAV.Echo_of_War)
         self._dungeon_wait_until_dungeon_list_loaded()
         monday = get_server_next_monday_update(self.config.Scheduler_ServerUpdate)
 
@@ -92,7 +94,7 @@ class WeeklyDungeon(Dungeon):
                 self.config.task_delay(target=monday)
                 self.config.task_stop()
 
-        self.dungeon_insight(dungeon)
+        self._dungeon_insight(dungeon)
         self._dungeon_enter(dungeon)
 
         # Combat

@@ -23,7 +23,7 @@ DICT_SORTED_RANGES = {
         Boothill,
         Yukong,
         TopazNumby,
-        March7thPreservation,
+        March7th,
         Bronya,
         Asta,
         Pela,

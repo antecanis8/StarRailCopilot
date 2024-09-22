@@ -516,17 +516,7 @@ class AzurLaneConfig(ConfigUpdater, ManualConfig, GeneratedConfig, ConfigWatcher
                 self.stored.DailyActivity.clear()
             if self.stored.DailyQuest.is_expired():
                 logger.info('DailyQuest expired')
-                q = self.stored.DailyQuest
-                q.clear()
-                # Assume fixed quests
-                q.write_quests([
-                    'Complete_1_Daily_Mission',
-                    'Log_in_to_the_game',
-                    'Dispatch_1_assignments',
-                    'Complete_Divergent_Universe_or_Simulated_Universe_1_times',
-                    'Obtain_victory_in_combat_with_Support_Characters_1_times',
-                    'Consume_120_Trailblaze_Power',
-                ])
+                self.stored.DailyQuest.clear()
 
     def update_battle_pass_quests(self):
         """
