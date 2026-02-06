@@ -50,9 +50,9 @@ def to_server(package_or_server: str, before: str = '') -> str:
     Convert package/server to server.
     To unknown packages, consider they are a CN channel servers.
     """
-    if package_or_server.startswith('com.HoYoverse.hkrpg'):
+    if package_or_server == 'com.HoYoverse.hkrpgoversea':
         # Can't distinguish different regions of oversea servers, but we try to reuse old value
-        if before in ['OVERSEA-Asia', 'OVERSEA-America', 'OVERSEA-Europe', 'OVERSEA-TWHKMO', 'VN-Official']:
+        if before in ['OVERSEA-Asia', 'OVERSEA-America', 'OVERSEA-Europe', 'OVERSEA-TWHKMO']:
             return before
         else:
             # otherwise assume it's 'OVERSEA-Asia'
